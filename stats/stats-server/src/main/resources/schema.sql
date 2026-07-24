@@ -1,0 +1,7 @@
+CREATE TABLE IF NOT EXISTS hits (
+    hit_id        BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    hit_app       VARCHAR(255) NOT NULL,
+    hit_uri       VARCHAR(2048) NOT NULL,
+    hit_ip        VARCHAR(50) NOT NULL,
+    hit_timestamp TIMESTAMP WITHOUT TIME ZONE NOT NULL
+);

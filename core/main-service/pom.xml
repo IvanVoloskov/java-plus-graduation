@@ -15,7 +15,6 @@
 
     <properties>
         <org.mapstruct.version>1.5.2.Final</org.mapstruct.version>
-        <lombok.version>1.18.32</lombok.version>
     </properties>
 
     <dependencies>
@@ -84,7 +83,6 @@
             <groupId>com.querydsl</groupId>
             <artifactId>querydsl-jpa</artifactId>
             <classifier>jakarta</classifier>
-            <version>5.1.0</version>
         </dependency>
 
         <dependency>

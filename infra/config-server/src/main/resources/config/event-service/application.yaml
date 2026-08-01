@@ -16,7 +16,7 @@ spring:
         format_sql: true
   sql:
     init:
-      mode: never
+      mode: always
 feign:
   circuitbreaker:
     enabled: true

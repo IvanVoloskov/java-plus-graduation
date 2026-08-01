@@ -10,7 +10,7 @@ import java.util.List;
 @FeignClient(name = "user-service")
 public interface UserClient {
 
-    @GetMapping
+    @GetMapping("/admin/users")
     List<UserShortDto> findAll(@RequestParam("ids") List<Long> ids,
                                @RequestParam(value = "from", defaultValue = "0") Integer from,
                                @RequestParam(value = "size", defaultValue = "10") Integer size);

@@ -1,6 +1,7 @@
 package ewm.user.service;
 
 import com.querydsl.core.types.dsl.BooleanExpression;
+import ewm.exception.ConflictException;
 import ewm.exception.NotFoundException;
 import ewm.user.dto.AdminUserParam;
 import ewm.user.dto.UserDto;
@@ -30,6 +31,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto create(UserPostDto userPostDto) {
+        if (userRepository.existsByEmail(userPostDto.email())) {
+            throw new ConflictException("Пользователь с email: " + userPostDto.email() + " уже существует.");
+        }
         User user = userMapper.userPostDtoToUser(userPostDto);
         User savedUser = userRepository.save(user);
         log.info("Created new user {}", savedUser);

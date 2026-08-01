@@ -6,4 +6,7 @@ import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 
 
 public interface UserRepository extends JpaRepository<User, Long>, QuerydslPredicateExecutor<User>  {
+
+    boolean existsByEmail(String email);
+
 }

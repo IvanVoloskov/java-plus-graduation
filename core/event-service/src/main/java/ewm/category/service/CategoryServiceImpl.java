@@ -5,6 +5,7 @@ import ewm.category.dto.NewCategoryDto;
 import ewm.category.mapper.CategoryMapper;
 import ewm.category.model.Category;
 import ewm.category.repository.CategoryRepository;
+import ewm.event.repository.EventRepository;
 import ewm.exception.ConflictException;
 import ewm.exception.NotFoundException;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,6 +25,7 @@ import java.util.List;
 public class CategoryServiceImpl implements CategoryService {
     private final CategoryRepository categoryRepository;
     private final CategoryMapper categoryMapper;
+    private final EventRepository eventRepository;
 
     @Override
     @Transactional
@@ -49,7 +51,11 @@ public class CategoryServiceImpl implements CategoryService {
         log.info("Удаление категории с id: {}", categoryId);
 
         if (!categoryRepository.existsById(categoryId)) {
-            throw new ConflictException("Category with id=" + categoryId + " was not found");
+            throw new ConflictException("Категория с id " + categoryId + " не найдена");
+        }
+
+        if (eventRepository.existsByCategoryId(categoryId)) {
+            throw new ConflictException("Cannot delete category because it has events");
         }
 
         categoryRepository.deleteById(categoryId);

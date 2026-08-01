@@ -8,7 +8,7 @@ spring:
       server:
         native:
           searchLocations:
-            - classpath:config/{application}
+            - classpath:config/{application}/
 
 server:
   port: 0

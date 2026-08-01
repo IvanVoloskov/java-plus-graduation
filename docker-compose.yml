@@ -1,14 +1,44 @@
 services:
   stats-server:
+    build: ./stats/stats-server
     ports:
       - "9090:9090"
 
   stats-db:
     image: postgres:16.1
 
-  ewm-service:
-    ports:
-      - "8080:8080"
-
-  ewm-db:
+  user-db:
     image: postgres:16.1
+    ports:
+      - "5434:5432"
+    environment:
+      POSTGRES_DB: user_db
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+
+  event-db:
+    image: postgres:16.1
+    ports:
+      - "5435:5432"
+    environment:
+      POSTGRES_DB: event_db
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+
+  request-db:
+    image: postgres:16.1
+    ports:
+      - "5436:5432"
+    environment:
+      POSTGRES_DB: request_db
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+
+  comment-db:
+    image: postgres:16.1
+    ports:
+      - "5437:5432"
+    environment:
+      POSTGRES_DB: comment_db
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password

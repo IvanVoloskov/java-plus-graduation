@@ -5,9 +5,10 @@ spring:
     import: "configserver:"
   cloud:
     config:
-      fail-fast: true
+      fail-fast: false
       retry:
         use-random-policy: true
+        max-attempts: 20
         max-interval: 6000
       discovery:
         enabled: true

@@ -29,7 +29,6 @@ import java.util.List;
 public class PrivateEventController {
 
     private final EventService eventService;
-    // private final ParticipationRequestService participationRequestService;
 
     @GetMapping
     public List<EventShortDto> getEvents(

@@ -30,7 +30,6 @@ public class CompilationServiceImpl implements CompilationService {
     private final CompilationRepository compilationRepository;
     private final CompilationMapper compilationMapper;
     private final EventRepository eventRepository;
-    // private final ParticipationRequestRepository requestRepository;
     private final EventService eventService;
 
     @Override
@@ -123,11 +122,6 @@ public class CompilationServiceImpl implements CompilationService {
         if (dto.isEmpty() || events.isEmpty()) {
             return;
         }
-
-         // List<Long> eventIds = events.stream().map(Event::getId).toList();
-
-        /* Map<Long, Long> confirmedRequestsMap = requestRepository.findAllConfirmedRequests(eventIds).stream()
-                .collect(Collectors.toMap(ConfirmedRequestCount::eventId, ConfirmedRequestCount::count)); */
 
         Map<Long, Long> viewsMap = eventService.getViewsMap(events, false);
 

@@ -13,14 +13,6 @@
 
     <artifactId>event-service</artifactId>
 
-    <properties>
-        <org.mapstruct.version>1.5.2.Final</org.mapstruct.version>
-    </properties>
-
-    <!-- Шаг 1: библиотечный модуль, main-service подключает его как зависимость.
-         На Шаге 2 добавим spring-boot-maven-plugin, discovery/config client
-         и свой application.yaml, main-service перестанет от него зависеть. -->
-
     <dependencies>
         <dependency>
             <groupId>ru.practicum</groupId>
@@ -81,7 +73,6 @@
         <dependency>
             <groupId>org.mapstruct</groupId>
             <artifactId>mapstruct</artifactId>
-            <version>${org.mapstruct.version}</version>
         </dependency>
         <dependency>
             <groupId>com.querydsl</groupId>

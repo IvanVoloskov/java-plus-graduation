@@ -8,7 +8,57 @@ spring:
         locator:
           enabled: false
       routes:
-        - id: main-service
-          uri: lb://main-service
+        - id: request-service-event-requests
+          uri: lb://request-service
           predicates:
-            - Path=/**
+            - Path=/users/{userId}/events/{eventId}/requests
+
+        - id: comment-service-event-comments
+          uri: lb://comment-service
+          predicates:
+            - Path=/users/{userId}/events/{eventId}/comments
+
+        - id: event-service-private-events
+          uri: lb://event-service
+          predicates:
+            - Path=/users/{userId}/events/**
+
+        - id: request-service-user-requests
+          uri: lb://request-service
+          predicates:
+            - Path=/users/{userId}/requests/**
+
+        - id: comment-service-user-comments
+          uri: lb://comment-service
+          predicates:
+            - Path=/users/{userId}/comments/**
+
+        - id: event-service-admin
+          uri: lb://event-service
+          predicates:
+            - Path=/admin/events/**,/admin/categories/**,/admin/compilations/**
+
+        - id: comment-service-admin
+          uri: lb://comment-service
+          predicates:
+            - Path=/admin/comments/**
+
+        - id: user-service-admin
+          uri: lb://user-service
+          predicates:
+            - Path=/admin/users/**
+
+        - id: event-service-public
+          uri: lb://event-service
+          predicates:
+            - Path=/events/**,/categories/**,/compilations/**
+
+        - id: comment-service-public
+          uri: lb://comment-service
+          predicates:
+            - Path=/comments/**
+
+        - id: stats-server
+          uri: lb://stats-server
+          predicates:
+            - Path=/hit/**,/stats/**

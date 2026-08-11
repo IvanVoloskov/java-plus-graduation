@@ -1,0 +1,38 @@
+server:
+  port: 0
+
+grpc:
+  server:
+    port: 0
+
+spring:
+  datasource:
+    driverClassName: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5438/analyzer_db
+    username: user
+    password: password
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      group-id: analyzer-group
+      auto-offset-reset: earliest
+      enable-auto-commit: true
+      key-deserializer: org.apache.kafka.common.serialization.LongDeserializer
+      value-deserializer: ewm.stats.analyzer.kafka.AvroDeserializer
+
+analyzer:
+  kafka:
+    topics:
+      user-actions: stats.user-actions.v1
+      events-similarity: stats.events-similarity.v1
+  weights:
+    view: 0.4
+    register: 0.8
+    like: 1.0

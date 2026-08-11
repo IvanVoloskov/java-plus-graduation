@@ -1,12 +1,4 @@
 services:
-  stats-server:
-    build: ./stats/stats-server
-    ports:
-      - "9090:9090"
-
-  stats-db:
-    image: postgres:16.1
-
   user-db:
     image: postgres:16.1
     ports:
@@ -42,3 +34,48 @@ services:
       POSTGRES_DB: comment_db
       POSTGRES_USER: user
       POSTGRES_PASSWORD: password
+
+  analyzer-db:
+    image: postgres:16.1
+    ports:
+      - "5438:5432"
+    environment:
+      POSTGRES_DB: analyzer_db
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+
+  kafka:
+    image: confluentinc/confluent-local:7.4.3
+    hostname: kafka
+    container_name: kafka
+    ports:
+      - "9092:9092"   # для клиентских подключений с хоста
+      - "9101:9101"   # JMX
+    restart: unless-stopped
+    environment:
+      KAFKA_NODE_ID: 1
+      KAFKA_PROCESS_ROLES: 'broker,controller'
+      KAFKA_LISTENERS: 'PLAINTEXT://kafka:29092,CONTROLLER://kafka:29093,PLAINTEXT_HOST://0.0.0.0:9092'
+      KAFKA_ADVERTISED_LISTENERS: 'PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092'
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: 'CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT'
+      KAFKA_INTER_BROKER_LISTENER_NAME: 'PLAINTEXT'
+      KAFKA_CONTROLLER_LISTENER_NAMES: 'CONTROLLER'
+      KAFKA_CONTROLLER_QUORUM_VOTERS: '1@kafka:29093'
+      KAFKA_JMX_PORT: 9101
+      KAFKA_JMX_HOSTNAME: localhost
+      CLUSTER_ID: 'K0EA9p0yEe6MkAAAAkKsEg'
+
+    # ---------- СОЗДАНИЕ ТОПИКОВ ----------
+  kafka-init-topics:
+    image: confluentinc/confluent-local:7.4.3
+    container_name: kafka-init-topics
+    depends_on:
+      - kafka
+    init: true
+    command: "bash -c \
+                'kafka-topics --create --topic stats.user-actions.v1 \
+                             --partitions 3 --replication-factor 1 --if-not-exists \
+                             --bootstrap-server kafka:29092 && \
+                kafka-topics --create --topic stats.events-similarity.v1 \
+                             --partitions 3 --replication-factor 1 --if-not-exists \
+                             --bootstrap-server kafka:29092'"

@@ -48,7 +48,7 @@ public class CompilationServiceImpl implements CompilationService {
         log.info("Create new compilation {}", savedCompilation);
 
         CompilationDto dto = compilationMapper.compilationToDto(savedCompilation);
-        saveViewsAndConfirmedRequests(List.of(dto), savedCompilation.getEvents());
+        saveRatingsAndConfirmedRequests(List.of(dto), savedCompilation.getEvents());
         return dto;
     }
 
@@ -75,7 +75,7 @@ public class CompilationServiceImpl implements CompilationService {
         log.info("Recreate updated compilation {}", savedCompilation);
 
         CompilationDto dto = compilationMapper.compilationToDto(savedCompilation);
-        saveViewsAndConfirmedRequests(List.of(dto), savedCompilation.getEvents());
+        saveRatingsAndConfirmedRequests(List.of(dto), savedCompilation.getEvents());
         return dto;
     }
 
@@ -98,7 +98,7 @@ public class CompilationServiceImpl implements CompilationService {
                 .map(compilationMapper::compilationToDto)
                 .collect(Collectors.toList());
 
-        saveViewsAndConfirmedRequests(dto, events);
+        saveRatingsAndConfirmedRequests(dto, events);
         return dto;
     }
 
@@ -109,7 +109,7 @@ public class CompilationServiceImpl implements CompilationService {
         Compilation compilation = existsCompilation(compId);
         CompilationDto dto = compilationMapper.compilationToDto(compilation);
 
-        saveViewsAndConfirmedRequests(List.of(dto), compilation.getEvents());
+        saveRatingsAndConfirmedRequests(List.of(dto), compilation.getEvents());
         return dto;
     }
 
@@ -118,18 +118,20 @@ public class CompilationServiceImpl implements CompilationService {
                 .orElseThrow(() -> new NotFoundException(String.format("Compilation with id=%d was not found", compId)));
     }
 
-    private void saveViewsAndConfirmedRequests(List<CompilationDto> dto, List<Event> events) {
+    private void saveRatingsAndConfirmedRequests(List<CompilationDto> dto, List<Event> events) {
         if (dto.isEmpty() || events.isEmpty()) {
             return;
         }
 
-        Map<Long, Long> viewsMap = eventService.getViewsMap(events, false);
+        List<Long> eventIds = events.stream().map(Event::getId).toList();
+
+        Map<Long, Double> ratingsMap = eventService.getRatingsMap(eventIds);
 
         dto.forEach(comDto -> {
             if (comDto.events() != null) {
                 comDto.events().forEach(shortDto -> {
                     shortDto.setConfirmedRequests(0L);
-                    shortDto.setViews(viewsMap.getOrDefault(shortDto.getId(), 0L));
+                    shortDto.setRating(ratingsMap.getOrDefault(shortDto.getId(), 0.0));
                 });
             }
         });

@@ -1,0 +1,26 @@
+server:
+  port: 0
+
+spring:
+  kafka:
+    bootstrap-servers: localhost:9092
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.LongSerializer
+      value-serializer: ewm.stats.aggregator.kafka.AvroSerializer
+      acks: all
+    consumer:
+      group-id: aggregator-group
+      auto-offset-reset: earliest
+      enable-auto-commit: true
+      key-deserializer: org.apache.kafka.common.serialization.LongDeserializer
+      value-deserializer: ewm.stats.aggregator.kafka.AvroDeserializer
+
+aggregator:
+  kafka:
+    topics:
+      user-actions: stats.user-actions.v1
+      events-similarity: stats.events-similarity.v1
+  weights:
+    view: 0.4
+    register: 0.8
+    like: 1.0

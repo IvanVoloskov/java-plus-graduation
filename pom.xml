@@ -19,9 +19,7 @@
 
 	<!-- Для многомодульного проекта(сервис,dto,client,server) -->
 	<modules>
-		<module>stats/stats-dto</module>
-		<module>stats/stats-client</module>
-		<module>stats/stats-server</module>
+		<module>stats</module>
         <module>infra</module>
         <module>core</module>
     </modules>
@@ -33,6 +31,11 @@
         <org.mapstruct.version>1.5.2.Final</org.mapstruct.version>
         <querydsl.version>5.1.0</querydsl.version>
         <lombok.version>1.18.34</lombok.version>
+        <protobuf.version>3.25.5</protobuf.version>
+        <grpc.version>1.68.1</grpc.version>
+        <avro.version>1.11.3</avro.version>
+        <protobuf-plugin.version>0.6.1</protobuf-plugin.version>
+        <os-maven-plugin.version>1.7.1</os-maven-plugin.version>
 	</properties>
 
     <dependencyManagement>
@@ -49,12 +52,28 @@
                 <artifactId>mapstruct</artifactId>
                 <version>${org.mapstruct.version}</version>
             </dependency>
-
             <dependency>
                 <groupId>com.querydsl</groupId>
                 <artifactId>querydsl-jpa</artifactId>
                 <classifier>jakarta</classifier>
                 <version>${querydsl.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.protobuf</groupId>
+                <artifactId>protobuf-java</artifactId>
+                <version>${protobuf.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.grpc</groupId>
+                <artifactId>grpc-bom</artifactId>
+                <version>${grpc.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.avro</groupId>
+                <artifactId>avro</artifactId>
+                <version>${avro.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

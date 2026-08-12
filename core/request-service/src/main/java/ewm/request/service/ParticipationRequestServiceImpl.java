@@ -1,5 +1,6 @@
 package ewm.request.service;
 
+import client.CollectorClient;
 import ewm.client.EventClient;
 import ewm.client.UserClient;
 import ewm.client.dto.EventInfoDto;
@@ -32,6 +33,7 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
     private final ParticipationRequestMapper requestMapper;
     private final UserClient userClient;
     private final EventClient eventClient;
+    private final CollectorClient collectorClient;
 
     @Override
     public List<ParticipationRequestDto> getRequestByUserId(Long userId) {
@@ -84,6 +86,7 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
 
         log.info("Запрос на участие в событии добавлен");
 
+        collectorClient.sendRegister(userId, eventId);
         return requestMapper.mapToRequestDto(saveRequest);
     }
 

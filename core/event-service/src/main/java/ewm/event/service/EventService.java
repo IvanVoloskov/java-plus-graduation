@@ -27,13 +27,17 @@ public interface EventService {
 
     List<EventShortDto> getEventsPublic(PublicEventParamDto paramDto, HttpServletRequest request);
 
-    EventFullDto getEventByIdPublic(Long id, HttpServletRequest request);
+    EventFullDto getEventByIdPublic(Long id, Long userId);
 
     List<EventFullDto> searchEventsAdmin(AdminEventSearchFilter filter);
 
     EventFullDto updateEventAdmin(Long eventId, UpdateEventAdminRequest dto);
 
-    Map<Long, Long> getViewsMap(List<Event> events, boolean unique);
+    Map<Long, Double> getRatingsMap(List<Long> eventIds);
+
+    List<EventShortDto> getRecommendations(Long userId, Integer maxResults);
+
+    void likeEvent(Long userId, Long eventId);
 
     Event existsEvent(Long eventId);
 

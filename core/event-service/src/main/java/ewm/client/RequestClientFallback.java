@@ -19,6 +19,7 @@ public class RequestClientFallback implements RequestClient {
 
     @Override
     public List<ParticipationRequestDto> getUserRequests(Long userId) {
+        log.warn("request-service недоступен, заявки пользователя: id = {} недоступны", userId);
         return List.of();
     }
 }

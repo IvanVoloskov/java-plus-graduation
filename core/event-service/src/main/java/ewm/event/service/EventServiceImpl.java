@@ -42,6 +42,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -56,6 +57,9 @@ public class EventServiceImpl implements EventService {
     private final CollectorClient collectorClient;
     private final UserClient userClient;
     private final RequestClient requestClient;
+
+    private static final String SORT_RATING = "RATING";
+    private static final String EVENT_DATE = "EVENT_DATE";
 
     @Override
     public List<EventShortDto> getEventsPrivate(Long userId, Integer from, Integer size) {
@@ -211,7 +215,7 @@ public class EventServiceImpl implements EventService {
         paramFilter.and(event.state.eq(EventState.PUBLISHED));
 
         Sort sortEventDate = Sort.unsorted();
-        if (eventParamDto.sort() != null && eventParamDto.sort().equalsIgnoreCase("EVENT_DATE")) {
+        if (eventParamDto.sort() != null && eventParamDto.sort().equalsIgnoreCase(EVENT_DATE)) {
             sortEventDate = Sort.by("eventDate").ascending();
         }
 
@@ -250,7 +254,7 @@ public class EventServiceImpl implements EventService {
                 })
                 .toList());
 
-        if (eventParamDto.sort() != null && eventParamDto.sort().equalsIgnoreCase("RATING")) {
+        if (eventParamDto.sort() != null && eventParamDto.sort().equalsIgnoreCase(SORT_RATING)) {
             shortsDto.sort(Comparator.comparing(EventShortDto::getRating).reversed());
         }
 
@@ -341,7 +345,7 @@ public class EventServiceImpl implements EventService {
     @Override
     @Transactional
     public EventFullDto updateEventAdmin(Long eventId, UpdateEventAdminRequest dto) {
-        log.info("Update event with ID: {}", eventId);
+        log.info("Обновление события с ID: {}", eventId);
 
         Event event = existsEvent(eventId);
 
@@ -349,33 +353,22 @@ public class EventServiceImpl implements EventService {
             throw new ValidationException("Дата события должна быть не раньше, чем через час");
         }
 
-        if (dto.annotation() != null) {
-            event.setAnnotation(dto.annotation());
-        }
-        if (dto.description() != null) {
-            event.setDescription(dto.description());
-        }
-        if (dto.eventDate() != null) {
-            event.setEventDate(dto.eventDate());
-        }
-        if (dto.paid() != null) {
-            event.setPaid(dto.paid());
-        }
-        if (dto.participantLimit() != null) {
-            event.setParticipantLimit(dto.participantLimit());
-        }
-        if (dto.requestModeration() != null) {
-            event.setRequestModeration(dto.requestModeration());
-        }
-        if (dto.title() != null) {
-            event.setTitle(dto.title());
-        }
+        updateField(dto.annotation(), event::setAnnotation);
+        updateField(dto.description(), event::setDescription);
+        updateField(dto.eventDate(), event::setEventDate);
+        updateField(dto.paid(), event::setPaid);
+        updateField(dto.participantLimit(), event::setParticipantLimit);
+        updateField(dto.requestModeration(), event::setRequestModeration);
+        updateField(dto.title(), event::setTitle);
+
         if (dto.location() != null) {
             event.setLocation(new Location(dto.location().getLat(), dto.location().getLon()));
         }
+
         if (dto.category() != null) {
             Category category = categoryRepository.findById(dto.category())
-                    .orElseThrow(() -> new NotFoundException("Category with id= " + dto.category() + " was not found"));
+                    .orElseThrow(() -> new NotFoundException(
+                            "Category with id= " + dto.category() + " was not found"));
             event.setCategory(category);
         }
 
@@ -411,6 +404,12 @@ public class EventServiceImpl implements EventService {
         Map<Long, Long> confirmedRequestsMap = getConfirmedRequestsMap(List.of(eventId));
         fullDto.setConfirmedRequests(confirmedRequestsMap.getOrDefault(eventId, 0L));
         return fullDto;
+    }
+
+    private <T> void updateField(T value, Consumer<T> setter) {
+        if (value != null) {
+            setter.accept(value);
+        }
     }
 
     @Override

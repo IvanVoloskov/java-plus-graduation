@@ -1,5 +1,6 @@
 package ewm.stats.analyzer.service;
 
+import ewm.stats.analyzer.config.AnalyzerProperties;
 import ewm.stats.analyzer.model.EventSimilarity;
 import ewm.stats.analyzer.model.EventSimilarityId;
 import ewm.stats.analyzer.model.UserAction;
@@ -32,17 +33,11 @@ public class AnalyzerService {
 
     private final UserActionRepository userActionRepository;
     private final EventSimilarityRepository similarityRepository;
+    private final AnalyzerProperties properties;
 
     private static final int NEIGHBOURS_COUNT = 3;
 
-    @Value("${analyzer.weights.view}")
-    private double viewWeight;
 
-    @Value("${analyzer.weights.register}")
-    private double registerWeight;
-
-    @Value("${analyzer.weights.like}")
-    private double likeWeight;
 
     @Transactional
     public void saveUserAction(UserActionAvro avro) {
@@ -73,9 +68,9 @@ public class AnalyzerService {
 
     private double actionWeight(ActionTypeAvro type) {
         return switch (type) {
-            case VIEW -> viewWeight;
-            case REGISTER -> registerWeight;
-            case LIKE -> likeWeight;
+            case VIEW -> properties.getWeights().getView();
+            case REGISTER -> properties.getWeights().getRegister();
+            case LIKE -> properties.getWeights().getLike();
         };
     }
 
